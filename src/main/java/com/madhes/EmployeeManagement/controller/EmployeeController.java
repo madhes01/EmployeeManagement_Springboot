@@ -40,8 +40,8 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public Page<EmployeeResponseDTO> getAllEmployees(Pageable pageble) {
-        return employeeService.getAllEmployees(pageble);
+    public Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable) {
+        return employeeService.getAllEmployees(pageable);
     }
 
     @GetMapping("/sector/{sectorName}")
