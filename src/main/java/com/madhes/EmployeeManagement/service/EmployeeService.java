@@ -17,18 +17,25 @@ import com.madhes.EmployeeManagement.repository.SectorRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
 
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
+
     private final EmployeeRepository employeeRepository;
     private final SectorRepository sectorRepository;
+
 
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO requestDTO) {
 
         Sector sector = sectorRepository.findById(requestDTO.getSectorId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Sector id not found"));
-
+                                
+        logger.info("Creating employee with empId: {}", requestDTO.getEmpId());
         Employee employee = new Employee();
         employee.setEmpId(requestDTO.getEmpId());
         employee.setName(requestDTO.getName());
@@ -38,6 +45,7 @@ public class EmployeeService {
         employee.setSector(sector);
 
         Employee savedEmployee = employeeRepository.save(employee);
+        logger.info("Employee created: {}", requestDTO.getEmpId());
 
         return mapToResponseDTO(savedEmployee);
     }
@@ -45,12 +53,15 @@ public class EmployeeService {
     public Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable) {
 
         Page<Employee> employee = employeeRepository.findAll(pageable);
+        logger.info("Fetching all employees with pagination: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         return employee.map(this::mapToResponseDTO);
     }
 
     public List<EmployeeResponseDTO> getEmployeeBySector(String sectorName) {
+        logger.info("Fetching employees by sector: {}", sectorName);
 
         List<Employee> employees =  employeeRepository.findBySectorName(sectorName);
+        logger.info("Found {} employees in sector: {}", employees.size(), sectorName);
         return employees.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
     }
 
@@ -76,6 +87,7 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee Not Found"));
 
+        logger.info("Fetching employee by ID: {}", id);
         return mapToResponseDTO(employee);
     }
 
@@ -95,7 +107,7 @@ public class EmployeeService {
         employee.setSector(sector);
 
         Employee updatedEmployee = employeeRepository.save(employee);
-
+        logger.info("Employee updated: {}", requestDTO.getEmpId());
         return mapToResponseDTO(updatedEmployee);
     }
 
@@ -105,6 +117,7 @@ public class EmployeeService {
 
         employeeRepository.delete(employee);
 
+        logger.info("Employee deleted: {}", id);
         return "Employee deleted successfully";
     }
 }
