@@ -19,7 +19,7 @@ import com.madhes.EmployeeManagement.dto.response.EmployeeResponseDTO;
 import com.madhes.EmployeeManagement.service.EmployeeService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
