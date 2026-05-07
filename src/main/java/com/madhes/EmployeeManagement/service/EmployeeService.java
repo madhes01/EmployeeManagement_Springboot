@@ -6,11 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.madhes.EmployeeManagement.dto.request.EmployeeRequestDTO;
 import com.madhes.EmployeeManagement.dto.response.EmployeeResponseDTO;
 import com.madhes.EmployeeManagement.entity.Employee;
 import com.madhes.EmployeeManagement.entity.Sector;
+import com.madhes.EmployeeManagement.exception.ResourceNotFoundException;
 import com.madhes.EmployeeManagement.repository.EmployeeRepository;
 import com.madhes.EmployeeManagement.repository.SectorRepository;
 
@@ -26,7 +28,7 @@ public class EmployeeService {
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO requestDTO) {
 
         Sector sector = sectorRepository.findById(requestDTO.getSectorId())
-                                .orElseThrow(() -> new RuntimeException("Sector id not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Sector id not found"));
 
         Employee employee = new Employee();
         employee.setEmpId(requestDTO.getEmpId());
@@ -65,5 +67,43 @@ public class EmployeeService {
         dto.setSectorName(employee.getSector().getName());
 
         return dto;
+    }
+
+  
+    public EmployeeResponseDTO getEmployeeById(Long id) {
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee Not Found"));
+
+        return mapToResponseDTO(employee);
+    }
+
+    public EmployeeResponseDTO updateEmployee(long id, EmployeeRequestDTO requestDTO) {
+
+        Employee employee = employeeRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        Sector sector = sectorRepository.findById(requestDTO.getSectorId())
+        .orElseThrow(() -> new ResourceNotFoundException("Sector not dound"));
+
+        employee.setEmpId(requestDTO.getEmpId());
+        employee.setName(requestDTO.getName());
+        employee.setEmail(requestDTO.getEmail());
+        employee.setDomain(requestDTO.getDomain());
+        employee.setGrade(requestDTO.getGrade());
+        employee.setSector(sector);
+
+        Employee updatedEmployee = employeeRepository.save(employee);
+
+        return mapToResponseDTO(updatedEmployee);
+    }
+
+    public String deleteEmployee(Long id) {
+        Employee employee = employeeRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        employeeRepository.delete(employee);
+
+        return "Employee deleted successfully";
     }
 }
