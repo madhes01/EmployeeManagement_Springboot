@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.madhes.EmployeeManagement.dto.request.EmployeeRequestDTO;
 import com.madhes.EmployeeManagement.dto.response.EmployeeResponseDTO;
@@ -65,6 +64,8 @@ public class EmployeeService {
         dto.setDomain(employee.getDomain());
         dto.setGrade(employee.getGrade());
         dto.setSectorName(employee.getSector().getName());
+        dto.setCreated_at(employee.getCreatedAt());
+        dto.setUpdated_at(employee.getUpdatetAt());
 
         return dto;
     }

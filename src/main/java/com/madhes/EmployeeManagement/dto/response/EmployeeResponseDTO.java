@@ -1,5 +1,7 @@
 package com.madhes.EmployeeManagement.dto.response;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +18,8 @@ public class EmployeeResponseDTO {
     private String domain;
     private String grade;
     private String sectorName;
+
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
 }

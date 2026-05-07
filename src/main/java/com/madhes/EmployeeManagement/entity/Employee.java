@@ -13,6 +13,11 @@ import lombok.AllArgsConstructor;
 
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @Getter
 @Setter
@@ -39,5 +44,13 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name="sector_id")
     private Sector sector;
+
+    @CreationTimestamp
+    @Column(name="created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name="updated_at")
+    private LocalDateTime updatetAt;
   
 }
