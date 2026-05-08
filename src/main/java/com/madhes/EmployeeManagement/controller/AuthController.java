@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.madhes.EmployeeManagement.dto.auth.LoginRequestDTO;
 import com.madhes.EmployeeManagement.dto.auth.RegiterRequestDTO;
-import com.madhes.EmployeeManagement.security.JwtService;
 import com.madhes.EmployeeManagement.service.AuthService;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
     
     private final AuthService authService;
-    private final JwtService jwtService;
 
     @PostMapping("/register")
     public String register(@RequestBody RegiterRequestDTO request) {
