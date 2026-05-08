@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.madhes.EmployeeManagement.dto.auth.LoginRequestDTO;
+import com.madhes.EmployeeManagement.dto.auth.RegiterRequestDTO;
 import com.madhes.EmployeeManagement.security.JwtService;
+import com.madhes.EmployeeManagement.service.AuthService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -14,16 +16,18 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
+    
+    private final AuthService authService;
     private final JwtService jwtService;
+
+    @PostMapping("/register")
+    public String register(@RequestBody RegiterRequestDTO request) {
+        return authService.register(request);
+    }
 
     @PostMapping("/login")
     public String login(@RequestBody LoginRequestDTO request) {
-        if(request.getUsername().equals("admin") && request.getPassword().equals("admin123")) {
-            return jwtService.generateToken(request.getUsername());
-        } else {
-            throw new RuntimeException("Invalid credentials");
-        }
+        return authService.login(request);
     }
 
 }

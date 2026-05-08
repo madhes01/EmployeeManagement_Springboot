@@ -19,7 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException; 
 import java.util.Collections;
 
-@Component @RequiredArgsConstructor 
+@Component
+@RequiredArgsConstructor 
 public class JwtAuthFilter extends OncePerRequestFilter {
 
 private final JwtService jwtService;
@@ -74,5 +75,6 @@ protected void doFilterInternal(
     }
 
     filterChain.doFilter(request, response);
+    System.out.println("JWT Auth Filter executed");
 }
 }
