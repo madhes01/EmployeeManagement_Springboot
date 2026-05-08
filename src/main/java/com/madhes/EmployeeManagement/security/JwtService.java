@@ -31,7 +31,7 @@ public String generateToken(String username) {
 
             .setExpiration(
                     new Date(System.currentTimeMillis()
-                            + 1000 * 60 * 60))
+                            + 1000 * 60 * 60 * 24))
 
             .signWith(
                     getSignKey(),
