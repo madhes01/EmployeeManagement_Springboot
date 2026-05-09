@@ -10,7 +10,8 @@ import java.security.Key;
 
 import java.util.Date;
 
-@Service public class JwtService {
+@Service 
+public class JwtService {
 
 private static final String SECRET_KEY =
         "mysecretkeymysecretkeymysecretkey12345";
