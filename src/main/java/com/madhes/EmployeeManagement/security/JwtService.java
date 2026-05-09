@@ -1,8 +1,11 @@
 package com.madhes.EmployeeManagement.security;
 
-import io.jsonwebtoken.Claims; import io.jsonwebtoken.Jwts; import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
@@ -10,70 +13,63 @@ import java.security.Key;
 
 import java.util.Date;
 
-@Service 
+@Service
 public class JwtService {
 
-private static final String SECRET_KEY =
-        "mysecretkeymysecretkeymysecretkey12345";
+        // Injected from application.properties → jwt.secret
+        @Value("${jwt.secret}")
+        private String secretKey;
 
-private Key getSignKey() {
+        @Value("${jwt.expiration-ms}")
+        private long expirationMs;
 
-    return Keys.hmacShaKeyFor(
-            SECRET_KEY.getBytes());
-}
+        /**
+         * Builds an HMAC-SHA256 signing key from the secret string.
+         * Keys.hmacShaKeyFor() requires at least 256 bits (32 bytes).
+         */
+        private Key getSignKey() {
+                return Keys.hmacShaKeyFor(secretKey.getBytes());
+        }
 
-public String generateToken(String username) {
+        public String generateToken(String username) {
+                return Jwts.builder()
+                                .setSubject(username)
+                                .setIssuedAt(new Date())
+                                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                                .compact();
+        }
 
-    return Jwts.builder()
+        public String extractUsername(String token) {
+                return extractClaims(token).getSubject();
+        }
 
-            .setSubject(username)
+        /**
+         * Parses and returns all claims from the JWT.
+         * Throws JwtException (SignatureException, ExpiredJwtException, etc.)
+         * if the token is tampered with or expired.
+         */
+        private Claims extractClaims(String token) {
+                return Jwts.parserBuilder()
+                                .setSigningKey(getSignKey())
+                                .build()
+                                .parseClaimsJws(token)
+                                .getBody();
+        }
 
-            .setIssuedAt(new Date())
+        /**
+         * Validates token:
+         * 1. Username in token must match the provided username
+         * 2. Token must not be expired
+         */
+        public boolean isTokenValid(String token, String username) {
+                String extractedUsername = extractUsername(token);
+                return extractedUsername.equals(username) && !isTokenExpired(token);
+        }
 
-            .setExpiration(
-                    new Date(System.currentTimeMillis()
-                            + 1000 * 60 * 60 * 24))
-
-            .signWith(
-                    getSignKey(),
-                    SignatureAlgorithm.HS256)
-
-            .compact();
-}
-
-public String extractUsername(String token) {
-
-    return extractClaims(token).getSubject();
-}
-
-private Claims extractClaims(String token) {
-
-    return Jwts.parserBuilder()
-
-            .setSigningKey(getSignKey())
-
-            .build()
-
-            .parseClaimsJws(token)
-
-            .getBody();
-}
-
-public boolean isTokenValid(
-        String token,
-        String username) {
-
-    String extractedUsername =
-            extractUsername(token);
-
-    return extractedUsername.equals(username)
-            && !isTokenExpired(token);
-}
-
-private boolean isTokenExpired(String token) {
-
-    return extractClaims(token)
-            .getExpiration()
-            .before(new Date());
-}
+        private boolean isTokenExpired(String token) {
+                return extractClaims(token)
+                                .getExpiration()
+                                .before(new Date());
+        }
 }
