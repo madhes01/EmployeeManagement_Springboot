@@ -98,3 +98,21 @@ mvn clean install -DskipTests
 
 
 https://chatgpt.com/share/69da2aba-d190-8321-b0ee-bf335c5ce2a1
+
+
+nano ~/.bashrc
+Keep ONLY these TWO clean lines:
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
+Nothing else.
+Then save:
+
+Ctrl + O
+Enter
+Ctrl + X
+
+Now reload:
+
+source ~/.bashrc
